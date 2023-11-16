@@ -4,20 +4,17 @@
 ```
 npm install
 ```
-
-### Compiles and hot-reloads for development
+## Iniciar API
 ```
+cd practica02
+node index.js
+```
+
+### Compilar e iniciar app
+```
+cd practica02
+cd practica02-vue
 npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
 ```
 
 ### Customize configuration
