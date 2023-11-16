@@ -1,26 +1,27 @@
 <script>
 import axios from 'axios';
-
+import { ref } from 'vue';
+import './assets/styles.css';
 
 export default {
-  data() {
-    return {
-      profile: null,
-    };
-  },
-  mounted() {
-    this.obtenerData();
-  },
-  methods: {
-    async obtenerData() {
+  setup() {
+    const profile = ref(null);
+
+    const obtenerData = async () => {
       try {
         const response = await axios.get('http://localhost:3000/api/profile');
-        this.profile = response.data;
+        profile.value = response.data;
         console.log("Respuesta: ", response);
       } catch (error) {
         console.error('Error al obtener el mensaje:', error);
       }
-    },
+    };
+
+    obtenerData();
+
+    return {
+      profile,
+    };
   },
 };
 </script>
@@ -34,59 +35,52 @@ export default {
     <title>Perfil Profesional</title>
     <link rel="stylesheet" href="./assets/styles.css">
   </head>
-  <body>
-    <head>
-      <h1 v-if="profile">Perfil Profesional: {{ profile.name }} {{ profile.lastname }}</h1>
-      <p>Estudiante de Ingeniería en Computación e Informática en la Universidad Católica del Norte</p>
-    </head>
-    <section>
-        <h2>Datos Personales</h2>
-        <div class="flex flex-wrap">
-          <p class="flex-1 bg-[#bf4a4a] text-center text-[aliceblue] m-2.5 p-[15px]">Edad: 25 años</p>
-          <p class="flex-1 bg-[#bf4a4a] text-center text-[aliceblue] m-2.5 p-[15px]">Ciudad de origen: Antofagasta</p>
-          <p class="flex-1 bg-[#bf4a4a] text-center text-[aliceblue] m-2.5 p-[15px]">correo: nicolas.tapia02@alumnos.ucn.cl</p>
+  <body class="bg-[#872341]">
+    <section class="flex-col">
+        <h1  class ="text-4xl text-center" v-if="profile">Perfil Profesional: {{ profile.name }} {{ profile.lastname }}</h1>
+        <p class="text-2xl italic text-center"> {{ profile.summary }}</p>
+        <h2 class="text-2xl text-center">Datos Personales</h2>
+        <div class="flex flex-nowrap">
+          <p class="flex-1 bg-[#22092C] text-center text-[aliceblue] m-2.5 p-[15px] rounded-lg">Edad: {{profile.age}}</p>
+          <p class="flex-1 bg-[#22092C] text-center text-[aliceblue] m-2.5 p-[15px] rounded-lg">Ciudad de origen: {{ profile.city }}</p>
+          <p class="flex-1 bg-[#22092C] text-center text-[aliceblue] m-2.5 p-[15px] rounded-lg">Correo: {{ profile.email }}</p>
         </div>
-        <p>Red social:</p>
-        <a href="https://www.instagram.com/n_kishin/" target="_blank">
+        <div class="text-2xl flex flex-wrap">
+          <p class="text-2xl text-center">Red social</p>
+          <a href="https://www.instagrm.com/n_kishin/" target="_blank">
             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Instagram_logo_2022.svg/225px-Instagram_logo_2022.svg.png" alt="" width="30"> 
-        </a>
+          </a>
+        </div>
     </section>
-    <section>
-        <h2>Intereses</h2>
-        <div class="flex flex-wrap"> 
-            <ol>
-                <li class="list-inside p-2.5">Mi pareja</li>
-                <li class="list-inside p-2.5">Videojuegos</li>
-                <li class="list-inside p-2.5">Programar</li>
-                <li class="list-inside p-2.5">Dibujar</li>
-            
-            </ol>
+    <section class="flex w-1/2 p-4">
+        <h2  class="text-2xl font-bold mb-4">Intereses</h2>
+        <div v-if="profile" class="flex flex-wrap bg-[#872341] p-4 rounded-lg"> 
+          <ul>
+            <li class="list-inside p-2.5 bg-[#22092C] rounded-lg shadow" v-for="(hobbies, index) in profile.hobbies" :key="index">
+              <p class="font-semibold text-[aliceblue]">Nombre: {{ hobbies.name }}</p>
+              <p class="text-[aliceblue]">Descripción: {{ hobbies.description }}</p>
+            </li>
+          </ul>
         </div>
     
     </section>
-    <section>
-        <h2>Tabla de herramientas</h2>
-        <table>
+    <section class="flex p-4 bg-[#22092C]">
+        <h2  class="text-2xl font-bold mb-4 text-[aliceblue]">Tabla de herramientas</h2>
+        <table class="w-full table-auto">
+          <thread class="bg-gray-800 text-white">
             <tr>
-                <th>Herramienta</th>
-                <th>Lenguaje</th>
-                <th>Conocimiento</th>
+              <th class="px-4 py-2">Framework</th>
+              <th class="px-4 py-2">Nivel</th>
+              <th class="px-4 py-2">Año</th>
             </tr>
-            <tr>
-                <td>Visual Studio Code</td>
-                <td>JS,Py,Java, C++,HTML,CSS</td>
-                <td>Avanzado</td>
+          </thread>
+          <tbody>
+            <tr v-for="(framework, index) in profile.frameworks" :key="index" class="text-center bg-gray-200">
+                <td class="border px-4 py-2">{{ framework.name}}</td>
+                <td class="borrder px-4 py-2">{{ framework.level }}</td>
+                <td>{{ framework.year}}</td>
             </tr>
-            <tr>
-                <td>PyCharm</td>
-                <td>JS,HTML,CSS</td>
-                <td>Medio</td>
-            </tr>
-            <tr>
-                <td>Eclipse</td>
-                <td>Java</td>
-                <td>Bajo</td>
-            </tr>
+          </tbody>
         </table>
     </section>
   </body>
